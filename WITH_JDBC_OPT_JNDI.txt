@@ -1,4 +1,4 @@
-To setup this project with a mariadbi (1), postgresql (2)  or external JNDI datasource configuration (3):
+To setup this project with a mariadb (1), postgresql (2)  or external JNDI datasource configuration (3):
 ./setup.sh maria
 ./setup.sh pg
 ./setup.sh jndi

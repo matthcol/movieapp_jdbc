@@ -1,9 +1,7 @@
 package db;
 
-import java.io.Reader;
-import java.net.URISyntaxException;
+
 import java.sql.Connection;
-import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
@@ -33,7 +31,8 @@ public class DbTools {
 	private static DataSource datasource = null;
 	private static String jndiDataSourceName = null;
 	
-	private final static String SQL_ALL_MOVIES = "select * from movies";
+	private final static String SQL_ALL_MOVIES = "select * from movies " +
+			" order by year desc, title";
 	private final static String SQL_ADD_MOVIE = "insert into movies (title,year) values (?,?)";
 	
 	public static void loadParams() {
@@ -49,7 +48,11 @@ public class DbTools {
 			provider = properties.getProperty("datasource.provider");
 			jndiDataSourceName = properties.getProperty("datasource.jndi");
 			if (provider.equals("mariadb")){
-				datasource = new MariaDbDataSource(url);
+				try {
+					datasource = new MariaDbDataSource(url);
+				} catch (SQLException e) {
+					throw new RuntimeException(e);
+				}
 			} else if (provider.equals("postgresql")) {
 				PGSimpleDataSource ds = new PGSimpleDataSource();
 				ds.setUrl(url);
@@ -84,8 +87,9 @@ public class DbTools {
 			var res = st.executeQuery(SQL_ALL_MOVIES);
 			while (res.next()) {
 				var movie = new Movie();
+				movie.setId(res.getInt("id"));
 				movie.setTitle(res.getString("title"));
-				movie.setYear(res.getInt("year"));
+				movie.setYear(res.getShort("year"));
 				movies.add(movie);
 			}
 			return movies;

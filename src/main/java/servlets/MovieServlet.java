@@ -28,7 +28,7 @@ public class MovieServlet extends HttpServlet {
          super.init(config);
          DbTools.loadParams();
 	}
-	
+
 	/**
 	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
 	 */
@@ -37,7 +37,7 @@ public class MovieServlet extends HttpServlet {
 		var movies= DbTools.readMovies();
 		request.setAttribute("movies", movies);
 		request.getRequestDispatcher("/Movies.jsp")
-         		.forward(request, response);
+				.forward(request, response);
 	}
 
 	/**
@@ -49,12 +49,15 @@ public class MovieServlet extends HttpServlet {
 		request.setCharacterEncoding("UTF-8");
 		var title = request.getParameter("title");
 		var yearStr = request.getParameter("year");
-		var year = Integer.parseInt(yearStr);
+		var year = Short.parseShort(yearStr);
 		// create new object Movie
-		var movie = new Movie(title,year);
+		var movie = Movie.builder()
+				.title(title)
+				.year(year)
+				.toMovie();
 		// store new Movie in Database
 		DbTools.addMovie(movie);
-		// go back to the list of movies with GET method 
+		// go back to the list of movies with GET method
 		doGet(request, response);
 	}
 
